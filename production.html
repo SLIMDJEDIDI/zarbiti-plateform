@@ -1,161 +1,92 @@
-diff --git a/production.html b/production.html
-index c7a9d1f860b0f513df93731a7275a9a0eeb9bbec..64d6bdf9ae642bce898c3f8ab7927d9bee149e4d 100644
---- a/production.html
-+++ b/production.html
-@@ -1,102 +1,92 @@
- <!DOCTYPE html>
- <html lang="fr">
- <head>
-   <meta charset="UTF-8">
-   <title>Production – Zarbiti Plateforme</title>
-   <meta name="viewport" content="width=device-width,initial-scale=1">
-   <link rel="stylesheet" href="assets/style.css">
-+  <script src="assets/app.js"></script>
- </head>
- <body>
- <div class="login-container" id="locked" style="max-width:430px;">
-   <h1>Vue Production</h1>
-   <div class="info-msg">Veuillez vous connecter <a href="index.html">ici</a> avec un rôle Usine ou Admin.</div>
- </div>
- <div id="pageContent" class="hidden container" style="max-width:1100px;">
-   <nav>
-     <ul>
-       <li><a href="index.html">Accueil</a></li>
-       <li><a href="orders.html">Commandes</a></li>
-       <li><a href="parcels.html">Livraisons/Colis</a></li>
-       <li><a href="payments.html">Paiements</a></li>
-     </ul>
-     <span class="role-badge" id="userProd"></span>
-     <button onclick="logout()" style="float:right;">Déconnexion</button>
-   </nav>
-   <h2>Planification production</h2>
-   <div id="prodView"></div>
- </div>
- 
- <script>
--const REQUIRED_ROLE = ['admin','usine'];
--function checkLogin() {
--  let user = localStorage.getItem("zarbiti_user");
--  if(!user) return false;
--  let obj=JSON.parse(user);
--  if(!REQUIRED_ROLE.includes(obj.role)) return false;
-+document.addEventListener('DOMContentLoaded', ()=>{
-+  const user = requireAuth(['admin','usine'], 'production.html');
-+  if(!user) return;
-+
-   document.getElementById('locked').classList.add('hidden');
-   document.getElementById('pageContent').classList.remove('hidden');
--  document.getElementById('userProd').innerText = obj.role.charAt(0).toUpperCase()+obj.role.slice(1);
--  return true;
--}
--window.onload = checkLogin;
-+  applyRoleBadge(document.getElementById('userProd'), user.role);
-+  renderNav(user, document.querySelector('nav ul'));
- 
--// Charger commandes "Confirmé" / "En production"
--function getOrders() {
--  let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
--  return orders.filter(o=>o.status_pipeline==="Confirmé"||o.status_pipeline==="En production");
--}
-+  function getOrders() {
-+    let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
-+    return orders.filter(o=>o.status_pipeline==="Confirmé"||o.status_pipeline==="En production");
-+  }
- 
--// Helper calcul m2 (si dimension disponible et formatée "LxW" ou "L x W")
--function getM2(dim, qty) {
--  if(!dim) return "";
--  let m=dim.replace(/ /g,"").split("x");
--  if(m.length!==2) return "";
--  let L=parseFloat(m[0]);
--  let W=parseFloat(m[1]);
--  if(isNaN(L)||isNaN(W)) return "";
--  let sqm = L*W/10000; // Convertit cm² en m²
--  return sqm*parseInt(qty||1);
--}
-+  function getM2(dim, qty) {
-+    if(!dim) return "";
-+    let m=dim.replace(/ /g,"").split("x");
-+    if(m.length!==2) return "";
-+    let L=parseFloat(m[0]);
-+    let W=parseFloat(m[1]);
-+    if(isNaN(L)||isNaN(W)) return "";
-+    let sqm = L*W/10000;
-+    return sqm*parseInt(qty||1);
-+  }
- 
--// Grouper et afficher
--function renderProd(){
--  let orders = getOrders();
--  // Regroupé par type, design, dimension
--  let map = {};
--  orders.forEach(o=>{
--    let key = o.carpet_type+"|"+o.model_design+"|"+o.dimension;
--    if(!map[key]) map[key]={ type:o.carpet_type, design:o.model_design, dim:o.dimension, qty:0, orders:0, m2:0 };
--    map[key].qty += parseInt(o.quantity)||0;
--    map[key].orders += 1;
--    let m2 = getM2(o.dimension,o.quantity);
--    map[key].m2 += m2 ? m2 : 0;
--  });
--  let html = `<table style="width:100%;margin-top:20px;">
--    <thead><tr>
--      <th>Type tapis</th><th>Modèle / Design</th><th>Dimension</th>
--      <th>Commandes</th><th>Qté totale</th><th>Total m²</th>
--    </tr></thead>
--    <tbody>`;
--  for(const k in map){
--    let g=map[k];
--    html+=`<tr>
--      <td>${g.type}</td>
--      <td>${g.design}</td>
--      <td>${g.dim}</td>
--      <td>${g.orders}</td>
--      <td>${g.qty}</td>
--      <td>${g.m2.toFixed(2)}</td>
--    </tr>`;
-+  function renderProd(){
-+    let orders = getOrders();
-+    let map = {};
-+    orders.forEach(o=>{
-+      let key = o.carpet_type+"|"+o.model_design+"|"+o.dimension;
-+      if(!map[key]) map[key]={ type:o.carpet_type, design:o.model_design, dim:o.dimension, qty:0, orders:0, m2:0 };
-+      map[key].qty += parseInt(o.quantity)||0;
-+      map[key].orders += 1;
-+      let m2 = getM2(o.dimension,o.quantity);
-+      map[key].m2 += m2 ? m2 : 0;
-+    });
-+    let html = `<table style="width:100%;margin-top:20px;">`+
-+      `<thead><tr>`+
-+        `<th>Type tapis</th><th>Modèle / Design</th><th>Dimension</th>`+
-+        `<th>Commandes</th><th>Qté totale</th><th>Total m²</th>`+
-+      `</tr></thead>`+
-+      `<tbody>`;
-+    for(const k in map){
-+      let g=map[k];
-+      html+=`<tr>
-+        <td>${g.type}</td>
-+        <td>${g.design}</td>
-+        <td>${g.dim}</td>
-+        <td>${g.orders}</td>
-+        <td>${g.qty}</td>
-+        <td>${g.m2.toFixed(2)}</td>
-+      </tr>`;
-+    }
-+    html+="</tbody></table>";
-+    if(orders.length===0) html+="<div class='info-msg'>Aucune commande en production ou confirmée pour l'instant.</div>";
-+    document.getElementById('prodView').innerHTML = html;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Production – Zarbiti Plateforme</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
+ <script src="assets/app.js"></script>
+</head>
+<body>
+<div class="login-container" id="locked" style="max-width:430px;">
+  <h1>Vue Production</h1>
+  <div class="info-msg">Veuillez vous connecter <a href="index.html">ici</a> avec un rôle Usine ou Admin.</div>
+</div>
+<div id="pageContent" class="hidden container" style="max-width:1100px;">
+  <nav>
+    <ul>
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="orders.html">Commandes</a></li>
+      <li><a href="parcels.html">Livraisons/Colis</a></li>
+      <li><a href="payments.html">Paiements</a></li>
+    </ul>
+    <span class="role-badge" id="userProd"></span>
+    <button onclick="logout()" style="float:right;">Déconnexion</button>
+  </nav>
+  <h2>Planification production</h2>
+  <div id="prodView"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+ const user = requireAuth(['admin','usine'], 'production.html');
+ if(!user) return;
+
+  document.getElementById('locked').classList.add('hidden');
+  document.getElementById('pageContent').classList.remove('hidden');
+ applyRoleBadge(document.getElementById('userProd'), user.role);
+ renderNav(user, document.querySelector('nav ul'));
+
+ function getOrders() {
+   let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
+   return orders.filter(o=>o.status_pipeline==="Confirmé"||o.status_pipeline==="En production");
+ }
+
+ function getM2(dim, qty) {
+   if(!dim) return "";
+   let m=dim.replace(/ /g,"").split("x");
+   if(m.length!==2) return "";
+   let L=parseFloat(m[0]);
+   let W=parseFloat(m[1]);
+   if(isNaN(L)||isNaN(W)) return "";
+   let sqm = L*W/10000;
+   return sqm*parseInt(qty||1);
+ }
+
+ function renderProd(){
+   let orders = getOrders();
+   let map = {};
+   orders.forEach(o=>{
+     let key = o.carpet_type+"|"+o.model_design+"|"+o.dimension;
+     if(!map[key]) map[key]={ type:o.carpet_type, design:o.model_design, dim:o.dimension, qty:0, orders:0, m2:0 };
+     map[key].qty += parseInt(o.quantity)||0;
+     map[key].orders += 1;
+     let m2 = getM2(o.dimension,o.quantity);
+     map[key].m2 += m2 ? m2 : 0;
+   });
+   let html = `<table style="width:100%;margin-top:20px;">`+
+     `<thead><tr>`+
+       `<th>Type tapis</th><th>Modèle / Design</th><th>Dimension</th>`+
+       `<th>Commandes</th><th>Qté totale</th><th>Total m²</th>`+
+     `</tr></thead>`+
+     `<tbody>`;
+   for(const k in map){
+     let g=map[k];
+     html+=`<tr>
+       <td>${g.type}</td>
+       <td>${g.design}</td>
+       <td>${g.dim}</td>
+       <td>${g.orders}</td>
+       <td>${g.qty}</td>
+       <td>${g.m2.toFixed(2)}</td>
+     </tr>`;
    }
--  html+="</tbody></table>";
--  if(orders.length===0) html+="<div class='info-msg'>Aucune commande en production ou confirmée pour l'instant.</div>";
--  document.getElementById('prodView').innerHTML = html;
--}
--renderProd();
--window.logout = function(){
--  localStorage.removeItem("zarbiti_user");
--  location.href="index.html";
--}
-+  renderProd();
-+});
- </script>
- </body>
- </html>
+   html+="</tbody></table>";
+   if(orders.length===0) html+="<div class='info-msg'>Aucune commande en production ou confirmée pour l'instant.</div>";
+   document.getElementById('prodView').innerHTML = html;
+  }
+ renderProd();
+});
+</script>
+</body>
+</html>
