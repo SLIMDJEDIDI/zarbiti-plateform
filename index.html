@@ -1,4 +1,4 @@
-- <!DOCTYPE html>
+<!DOCTYPE html>
 - <html lang="fr">
 - <head>
 -   <meta charset="UTF-8">
@@ -148,3 +148,91 @@
 +
 +</body>
 +</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Zarbiti – Plateforme Opérationnelle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-page="home">
+  <header class="header">
+    <div class="brand"><span class="dot"></span> Zarbiti Plateforme</div>
+    <nav>
+      <ul>
+        <li><a data-page="home" href="index.html">Accueil</a></li>
+        <li><a data-page="orders" href="orders.html">Commandes</a></li>
+        <li><a data-page="production" href="production.html">Production</a></li>
+        <li><a data-page="parcels" href="parcels.html">Livraisons</a></li>
+        <li><a data-page="payments" href="payments.html">Paiements</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Pilotez la vente de tapis sans friction</h1>
+      <p>Suivez les commandes, la production, les expéditions et les paiements dans une seule plateforme – sans aucun module de connexion.</p>
+    </section>
+
+    <section>
+      <div class="grid cards">
+        <div class="card">
+          <p class="big" id="count-orders">0</p>
+          <p>Commandes actives</p>
+        </div>
+        <div class="card">
+          <p class="big" id="count-production">0</p>
+          <p>Lots de production</p>
+        </div>
+        <div class="card">
+          <p class="big" id="count-parcels">0</p>
+          <p>Colis à suivre</p>
+        </div>
+        <div class="card">
+          <p class="big" id="count-payments">0</p>
+          <p>Mouvements de paiement</p>
+        </div>
+        <div class="card">
+          <p class="big" id="total-payments">0 MAD</p>
+          <p>Total des encaissements</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Actions rapides</h2>
+      </div>
+      <div class="grid cards">
+        <a class="card" href="orders.html">
+          <h3>Créer une commande</h3>
+          <p>Ajouter un client, une dimension et suivre le statut jusqu'à la livraison.</p>
+        </a>
+        <a class="card" href="production.html">
+          <h3>Planifier la production</h3>
+          <p>Ajoutez vos lots et dates de sortie pour garder l'usine alignée.</p>
+        </a>
+        <a class="card" href="parcels.html">
+          <h3>Suivre les colis</h3>
+          <p>Consignez les transporteurs, villes et numéros de suivi.</p>
+        </a>
+        <a class="card" href="payments.html">
+          <h3>Tracer les paiements</h3>
+          <p>COD, espèces ou virement : tout est centralisé sans authentification.</p>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Dernières activités</h2>
+        <span class="badge">Mises à jour locales</span>
+      </div>
+      <div class="grid cards" id="activity"></div>
+    </section>
+  </main>
+</body>
+</html>
