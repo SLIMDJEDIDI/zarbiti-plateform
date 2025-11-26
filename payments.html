@@ -19,7 +19,7 @@ index 4f6801529f86a53d12c50d595843d5ab822dc374..37bda9550bff5d091d1f0e7d37fd3409
 - </head>
 - <body>
 - <div class="login-container" id="locked" style="max-width:450px;">
--   <h1>Paiements / Crédit Livraison</h1>
+-   <h1>Paiements / Crédit Livraison</h1>
 -   <div class="info-msg">Veuillez vous connecter <a href="index.html">ici</a> avec le rôle Comptabilité ou Admin.</div>
 - </div>
 - <div id="pageContent" class="hidden container" style="max-width:980px;">
@@ -153,7 +153,7 @@ index 4f6801529f86a53d12c50d595843d5ab822dc374..37bda9550bff5d091d1f0e7d37fd3409
 --  let companies = ["ZBS","Rapide","Aramex","Surexpress","Autre"];
 --  let tbody="";
 --  companies.forEach(comp=>{
---    // Total COD généré : tous colis livrés, somme cod_amount
+--    // Total COD généré : tous colis livrés, somme cod_amount
 --    let cod = parcels.filter(p=>p.company===comp && p.delivery_status==="Livré")
 --                     .reduce((a,b)=>a+(parseFloat(b.cod_amount)||0),0);
 --    // Total payé (somme des paiements enregistrés pour cette société)
@@ -182,7 +182,7 @@ index 4f6801529f86a53d12c50d595843d5ab822dc374..37bda9550bff5d091d1f0e7d37fd3409
 --  document.body.appendChild(link); link.click(); document.body.removeChild(link);
 --}
 --window.clearAll = function(){
---  if(confirm("Tout supprimer les paiements ?")){
+--  if(confirm("Tout supprimer les paiements ?")){
 --    payments = [];
 --    persistPayments();
 --    updateCreditTable();
@@ -199,7 +199,7 @@ index 4f6801529f86a53d12c50d595843d5ab822dc374..37bda9550bff5d091d1f0e7d37fd3409
 +</head>
 +<body>
 +<div class="login-container" id="locked" style="max-width:450px;">
-+  <h1>Paiements / Crédit Livraison</h1>
++  <h1>Paiements / Crédit Livraison</h1>
 +  <div class="info-msg">Veuillez vous connecter <a href="index.html">ici</a> avec le rôle Comptabilité ou Admin.</div>
 +</div>
 +<div id="pageContent" class="hidden container" style="max-width:980px;">
@@ -374,3 +374,97 @@ index 4f6801529f86a53d12c50d595843d5ab822dc374..37bda9550bff5d091d1f0e7d37fd3409
 +</script>
 +</body>
 +</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Paiements – Zarbiti Plateforme</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-page="payments">
+  <header class="header">
+    <div class="brand"><span class="dot"></span> Paiements & Crédits</div>
+    <nav>
+      <ul>
+        <li><a data-page="home" href="index.html">Accueil</a></li>
+        <li><a data-page="orders" href="orders.html">Commandes</a></li>
+        <li><a data-page="production" href="production.html">Production</a></li>
+        <li><a data-page="parcels" href="parcels.html">Livraisons</a></li>
+        <li><a data-page="payments" href="payments.html">Paiements</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="section-title">
+      <h2>Enregistrer un mouvement</h2>
+      <button id="clear-payments" class="secondary">Réinitialiser</button>
+    </div>
+    <form id="payment-form">
+      <div class="form-grid">
+        <div>
+          <label>Client / commande</label>
+          <input name="customer" placeholder="CMD-001 ou nom client" required>
+        </div>
+        <div>
+          <label>Montant (MAD)</label>
+          <input name="amount" type="number" min="0" step="50" required>
+        </div>
+        <div>
+          <label>Méthode</label>
+          <select name="method">
+            <option>COD</option>
+            <option>Espèces</option>
+            <option>Virement</option>
+            <option>Chèque</option>
+          </select>
+        </div>
+        <div>
+          <label>Statut</label>
+          <select name="status">
+            <option>En attente</option>
+            <option>Collecté</option>
+            <option>Versé</option>
+            <option>Annulé</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label>Notes</label>
+        <textarea name="notes" placeholder="Référence de virement, main courante, etc."></textarea>
+      </div>
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <section style="margin-top:30px;">
+      <div class="section-title">
+        <h2>Statistiques paiements</h2>
+      </div>
+      <div class="grid cards" id="payments-summary"></div>
+    </section>
+
+    <section style="margin-top:20px;">
+      <div class="section-title">
+        <h2>Historique</h2>
+      </div>
+      <div class="table-wrapper">
+        <table id="payments-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Client/Commande</th>
+              <th>Méthode</th>
+              <th>Statut</th>
+              <th>Montant</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
