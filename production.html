@@ -255,3 +255,93 @@ index d16c9bd2859168ab02183198ec2b91b5ef6c0c2c..e1ada1aa6217e3a681e29193e9b50bc1
 +</script>
 +</body>
 +</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Production – Zarbiti Plateforme</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-page="production">
+  <header class="header">
+    <div class="brand"><span class="dot"></span> Production</div>
+    <nav>
+      <ul>
+        <li><a data-page="home" href="index.html">Accueil</a></li>
+        <li><a data-page="orders" href="orders.html">Commandes</a></li>
+        <li><a data-page="production" href="production.html">Production</a></li>
+        <li><a data-page="parcels" href="parcels.html">Livraisons</a></li>
+        <li><a data-page="payments" href="payments.html">Paiements</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="section-title">
+      <h2>Planifier un lot</h2>
+      <button id="clear-production" class="secondary">Réinitialiser</button>
+    </div>
+    <form id="production-form">
+      <div class="form-grid">
+        <div>
+          <label>Référence de lot</label>
+          <input name="reference" placeholder="LOT-2024-001" required>
+        </div>
+        <div>
+          <label>Produit</label>
+          <input name="product" placeholder="Tapis Beni Ourain" required>
+        </div>
+        <div>
+          <label>Date cible</label>
+          <input type="date" name="deadline">
+        </div>
+        <div>
+          <label>Statut</label>
+          <select name="status">
+            <option>Planifié</option>
+            <option>Découpe</option>
+            <option>Tissage</option>
+            <option>Finition</option>
+            <option>Expédié</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label>Notes internes</label>
+        <textarea name="notes" placeholder="Matière, couleur, consignes..."></textarea>
+      </div>
+      <button type="submit">Ajouter le lot</button>
+    </form>
+
+    <section style="margin-top:30px;">
+      <div class="section-title">
+        <h2>Vue d'ensemble</h2>
+      </div>
+      <div class="grid cards" id="production-summary"></div>
+    </section>
+
+    <section style="margin-top:20px;">
+      <div class="section-title">
+        <h2>Suivi de production</h2>
+      </div>
+      <div class="table-wrapper">
+        <table id="production-table">
+          <thead>
+            <tr>
+              <th>Créé le</th>
+              <th>Référence</th>
+              <th>Produit</th>
+              <th>Date cible</th>
+              <th>Statut</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
