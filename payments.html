@@ -1,226 +1,376 @@
 diff --git a/payments.html b/payments.html
-index 125ffb205cf24d447f01ce1d5a7a11686320a88b..f207ff68c7bbdfcde0604a807d370205950bcfc5 100644
+index 4f6801529f86a53d12c50d595843d5ab822dc374..37bda9550bff5d091d1f0e7d37fd340971e252c6 100644
 --- a/payments.html
 +++ b/payments.html
-@@ -1,32 +1,33 @@
- <!DOCTYPE html>
- <html lang="fr">
- <head>
-   <meta charset="UTF-8">
-   <title>Paiements & Crédit – Zarbiti Plateforme</title>
-   <meta name="viewport" content="width=device-width,initial-scale=1">
-   <link rel="stylesheet" href="assets/style.css">
-+  <script src="assets/app.js"></script>
- </head>
- <body>
- <div class="login-container" id="locked" style="max-width:450px;">
-   <h1>Paiements / Crédit Livraison</h1>
-   <div class="info-msg">Veuillez vous connecter <a href="index.html">ici</a> avec le rôle Comptabilité ou Admin.</div>
- </div>
- <div id="pageContent" class="hidden container" style="max-width:980px;">
-   <nav>
-     <ul>
-       <li><a href="index.html">Accueil</a></li>
-       <li><a href="orders.html">Commandes</a></li>
-       <li><a href="production.html">Production</a></li>
-       <li><a href="parcels.html">Livraisons/Colis</a></li>
-     </ul>
-     <span class="role-badge" id="rolePay"></span>
-     <button onclick="logout()" style="float:right;">Déconnexion</button>
-   </nav>
- 
-   <h2>Enregistrer un paiement livraison</h2>
-   <form id="payForm" autocomplete="off" style="margin-bottom:32px;">
-     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;">
-       <div>
-         <label>Date paiement</label>
-         <input name="pay_date" type="date" required>
-       </div>
-@@ -45,108 +46,113 @@
-         <input name="amount" type="number" min="0" step="1" required>
-       </div>
-     </div>
-     <button type="submit" style="margin-top:11px;">Ajouter paiement</button>
-   </form>
- 
-   <h2>Vue crédit par société</h2>
-   <table id="creditTable" style="width:100%;margin-top:14px;">
-     <thead>
-       <tr>
-         <th>Société</th>
-         <th>Total COD généré</th>
-         <th>Total payé</th>
-         <th>Solde restant</th>
-       </tr>
-     </thead>
-     <tbody></tbody>
-   </table>
-   <div style="margin-top:14px;">
-     <button onclick="exportCSV()">Exporter CSV paiements</button>
-     <button onclick="clearAll()">Tout supprimer</button>
-   </div>
- </div>
- 
- <script>
--const REQUIRED_ROLE = ['admin','compta'];
--function checkLogin() {
--  let user = localStorage.getItem("zarbiti_user");
--  if(!user) return false;
--  let obj=JSON.parse(user);
--  if(!REQUIRED_ROLE.includes(obj.role)) return false;
+@@ -1,226 +1,146 @@
+-diff --git a/payments.html b/payments.html
+-index 125ffb205cf24d447f01ce1d5a7a11686320a88b..f207ff68c7bbdfcde0604a807d370205950bcfc5 100644
+---- a/payments.html
+-+++ b/payments.html
+-@@ -1,32 +1,33 @@
+- <!DOCTYPE html>
+- <html lang="fr">
+- <head>
+-   <meta charset="UTF-8">
+-   <title>Paiements & Crédit – Zarbiti Plateforme</title>
+-   <meta name="viewport" content="width=device-width,initial-scale=1">
+-   <link rel="stylesheet" href="assets/style.css">
+-+  <script src="assets/app.js"></script>
+- </head>
+- <body>
+- <div class="login-container" id="locked" style="max-width:450px;">
+-   <h1>Paiements / Crédit Livraison</h1>
+-   <div class="info-msg">Veuillez vous connecter <a href="index.html">ici</a> avec le rôle Comptabilité ou Admin.</div>
+- </div>
+- <div id="pageContent" class="hidden container" style="max-width:980px;">
+-   <nav>
+-     <ul>
+-       <li><a href="index.html">Accueil</a></li>
+-       <li><a href="orders.html">Commandes</a></li>
+-       <li><a href="production.html">Production</a></li>
+-       <li><a href="parcels.html">Livraisons/Colis</a></li>
+-     </ul>
+-     <span class="role-badge" id="rolePay"></span>
+-     <button onclick="logout()" style="float:right;">Déconnexion</button>
+-   </nav>
+- 
+-   <h2>Enregistrer un paiement livraison</h2>
+-   <form id="payForm" autocomplete="off" style="margin-bottom:32px;">
+-     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;">
+-       <div>
+-         <label>Date paiement</label>
+-         <input name="pay_date" type="date" required>
+-       </div>
+-@@ -45,108 +46,113 @@
+-         <input name="amount" type="number" min="0" step="1" required>
+-       </div>
+-     </div>
+-     <button type="submit" style="margin-top:11px;">Ajouter paiement</button>
+-   </form>
+- 
+-   <h2>Vue crédit par société</h2>
+-   <table id="creditTable" style="width:100%;margin-top:14px;">
+-     <thead>
+-       <tr>
+-         <th>Société</th>
+-         <th>Total COD généré</th>
+-         <th>Total payé</th>
+-         <th>Solde restant</th>
+-       </tr>
+-     </thead>
+-     <tbody></tbody>
+-   </table>
+-   <div style="margin-top:14px;">
+-     <button onclick="exportCSV()">Exporter CSV paiements</button>
+-     <button onclick="clearAll()">Tout supprimer</button>
+-   </div>
+- </div>
+- 
+- <script>
+--const REQUIRED_ROLE = ['admin','compta'];
+--function checkLogin() {
+--  let user = localStorage.getItem("zarbiti_user");
+--  if(!user) return false;
+--  let obj=JSON.parse(user);
+--  if(!REQUIRED_ROLE.includes(obj.role)) return false;
+-+document.addEventListener('DOMContentLoaded', ()=>{
+-+  const user = requireAuth(['admin','compta'], 'payments.html');
+-+  if(!user) return;
+-+
+-   document.getElementById('locked').classList.add('hidden');
+-   document.getElementById('pageContent').classList.remove('hidden');
+--  document.getElementById('rolePay').innerText = obj.role.charAt(0).toUpperCase()+obj.role.slice(1);
+--  return true;
+--}
+--window.onload = checkLogin;
+-+  applyRoleBadge(document.getElementById('rolePay'), user.role);
+-+  renderNav(user, document.querySelector('nav ul'));
+-+
+-+  const PAYMENT_FIELDS = ["orderIndex","amount_expected","amount_received","payment_date","cod_status","notes","created_at"];
+-+  const table = document.getElementById('paymentsTable');
+-+  let payments = JSON.parse(localStorage.getItem("zarbiti_payments")||"[]");
+-+
+-+  function loadOrders(){
+-+    let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
+-+    let select = document.getElementById('orderIndex');
+-+    select.innerHTML = "";
+-+    orders.forEach((o,i)=>{
+-+      let opt = document.createElement('option');
+-+      opt.value = i;
+-+      opt.textContent = `[${i+1}] ${o.customer_name} – ${o.model_design}`;
+-+      select.appendChild(opt);
+-+    });
+-+  }
+- 
+--// Paiements enregistrés
+--let payments = JSON.parse(localStorage.getItem("zarbiti_payments")||"[]");
+--// Colis livrés
+--let parcels = JSON.parse(localStorage.getItem("zarbiti_parcels")||"[]");
+-+  document.getElementById('paymentForm').onsubmit = function(e){
+-+    e.preventDefault();
+-+    let f = e.target;
+-+    let p = {};
+-+    PAYMENT_FIELDS.forEach(k=>p[k]=f[k]?.value||"");
+-+    p.created_at = new Date().toISOString();
+-+    let existing = payments.findIndex(x=>x.orderIndex===p.orderIndex);
+-+    if(existing>=0){ payments[existing]=p; }
+-+    else { payments.push(p); }
+-+    persist();
+-+    f.reset();
+-+    loadOrders();
+-+    renderTable();
+-+  }
+- 
+--// Ajouter paiement
+--document.getElementById('payForm').onsubmit = function(e){
+--  e.preventDefault();
+--  let f = e.target;
+--  let p = {
+--    pay_date: f["pay_date"].value,
+--    company: f["company"].value,
+--    amount: parseFloat(f["amount"].value),
+--    created_at: new Date().toISOString()
+--  };
+--  payments.push(p);
+--  persistPayments();
+--  f.reset();
+--  updateCreditTable();
+--};
+-+  function renderTable(){
+-+    let thead = "<tr><th>#</th>"+PAYMENT_FIELDS.map(f=>`<th>${f.replace(/_/g,' ')}</th>`).join('')+"<th>Action</th></tr>";
+-+    let tbody = payments.map((p,i)=>`<tr>
+-+      <td>${i+1}</td>
+-+      ${PAYMENT_FIELDS.map(f=>`<td>${p[f]||''}</td>`).join('')}
+-+      <td><button onclick="deletePayment(${getIndex(p)})">Supprimer</button></td>
+-+    </tr>`).join('');
+-+    table.querySelector('thead').innerHTML = thead;
+-+    table.querySelector('tbody').innerHTML = tbody;
+-+  }
+- 
+--// Calcul crédit
+--function updateCreditTable() {
+--  // Groupes sociétés
+--  let companies = ["ZBS","Rapide","Aramex","Surexpress","Autre"];
+--  let tbody="";
+--  companies.forEach(comp=>{
+--    // Total COD généré : tous colis livrés, somme cod_amount
+--    let cod = parcels.filter(p=>p.company===comp && p.delivery_status==="Livré")
+--                     .reduce((a,b)=>a+(parseFloat(b.cod_amount)||0),0);
+--    // Total payé (somme des paiements enregistrés pour cette société)
+--    let paid = payments.filter(p=>p.company===comp)
+--                       .reduce((a,b)=>a+(parseFloat(b.amount)||0),0);
+--    let remain = cod-paid;
+--    tbody+=`<tr>
+--      <td>${comp}</td>
+--      <td>${cod.toFixed(2)}</td>
+--      <td>${paid.toFixed(2)}</td>
+--      <td style="color:${remain>0?'#f7bc6b':'#91c97a'};font-weight:700;">${remain.toFixed(2)}</td>
+--    </tr>`;
+--  });
+--  document.getElementById('creditTable').querySelector('tbody').innerHTML = tbody;
+--}
+--function persistPayments(){
+--  localStorage.setItem("zarbiti_payments",JSON.stringify(payments));
+--}
+--window.exportCSV = function(){
+--  let FIELDS=["pay_date","company","amount","created_at"];
+--  let csv = FIELDS.join(";")+"\n";
+--  csv += payments.map(p=>FIELDS.map(f=>'"'+(p[f]||"")+'"').join(";")).join("\n");
+--  const link = document.createElement('a');
+--  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+--  link.download = "zarbiti-paiements.csv";
+--  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+--}
+--window.clearAll = function(){
+--  if(confirm("Tout supprimer les paiements ?")){
+--    payments = [];
+--    persistPayments();
+--    updateCreditTable();
+-+  function getIndex(pay){
+-+    return payments.findIndex(p=>p.created_at===pay.created_at);
++<!DOCTYPE html>
++<html lang="fr">
++<head>
++  <meta charset="UTF-8">
++  <title>Paiements & Crédit – Zarbiti Plateforme</title>
++  <meta name="viewport" content="width=device-width,initial-scale=1">
++  <link rel="stylesheet" href="assets/style.css">
++ <script src="assets/app.js"></script>
++</head>
++<body>
++<div class="login-container" id="locked" style="max-width:450px;">
++  <h1>Paiements / Crédit Livraison</h1>
++  <div class="info-msg">Veuillez vous connecter <a href="index.html">ici</a> avec le rôle Comptabilité ou Admin.</div>
++</div>
++<div id="pageContent" class="hidden container" style="max-width:980px;">
++  <nav>
++    <ul>
++      <li><a href="index.html">Accueil</a></li>
++      <li><a href="orders.html">Commandes</a></li>
++      <li><a href="production.html">Production</a></li>
++      <li><a href="parcels.html">Livraisons/Colis</a></li>
++    </ul>
++    <span class="role-badge" id="rolePay"></span>
++    <button onclick="logout()" style="float:right;">Déconnexion</button>
++  </nav>
++
++  <h2>Enregistrer un paiement livraison</h2>
++  <form id="payForm" autocomplete="off" style="margin-bottom:32px;">
++    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;">
++      <div>
++        <label>Date paiement</label>
++        <input name="pay_date" type="date" required>
++      </div>
++        <input name="amount" type="number" min="0" step="1" required>
++      </div>
++    </div>
++    <button type="submit" style="margin-top:11px;">Ajouter paiement</button>
++  </form>
++
++  <h2>Vue crédit par société</h2>
++  <table id="creditTable" style="width:100%;margin-top:14px;">
++    <thead>
++      <tr>
++        <th>Société</th>
++        <th>Total COD généré</th>
++        <th>Total payé</th>
++        <th>Solde restant</th>
++      </tr>
++    </thead>
++    <tbody></tbody>
++  </table>
++  <div style="margin-top:14px;">
++    <button onclick="exportCSV()">Exporter CSV paiements</button>
++    <button onclick="clearAll()">Tout supprimer</button>
++  </div>
++</div>
++
++<script>
 +document.addEventListener('DOMContentLoaded', ()=>{
-+  const user = requireAuth(['admin','compta'], 'payments.html');
-+  if(!user) return;
++ const user = requireAuth(['admin','compta'], 'payments.html');
++ if(!user) return;
 +
-   document.getElementById('locked').classList.add('hidden');
-   document.getElementById('pageContent').classList.remove('hidden');
--  document.getElementById('rolePay').innerText = obj.role.charAt(0).toUpperCase()+obj.role.slice(1);
--  return true;
--}
--window.onload = checkLogin;
-+  applyRoleBadge(document.getElementById('rolePay'), user.role);
-+  renderNav(user, document.querySelector('nav ul'));
++  document.getElementById('locked').classList.add('hidden');
++  document.getElementById('pageContent').classList.remove('hidden');
++ applyRoleBadge(document.getElementById('rolePay'), user.role);
++ renderNav(user, document.querySelector('nav ul'));
 +
-+  const PAYMENT_FIELDS = ["orderIndex","amount_expected","amount_received","payment_date","cod_status","notes","created_at"];
-+  const table = document.getElementById('paymentsTable');
-+  let payments = JSON.parse(localStorage.getItem("zarbiti_payments")||"[]");
++ const PAYMENT_FIELDS = ["orderIndex","amount_expected","amount_received","payment_date","cod_status","notes","created_at"];
++ const table = document.getElementById('paymentsTable');
++ let payments = JSON.parse(localStorage.getItem("zarbiti_payments")||"[]");
 +
-+  function loadOrders(){
-+    let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
-+    let select = document.getElementById('orderIndex');
-+    select.innerHTML = "";
-+    orders.forEach((o,i)=>{
-+      let opt = document.createElement('option');
-+      opt.value = i;
-+      opt.textContent = `[${i+1}] ${o.customer_name} – ${o.model_design}`;
-+      select.appendChild(opt);
-+    });
++ function loadOrders(){
++   let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
++   let select = document.getElementById('orderIndex');
++   select.innerHTML = "";
++   orders.forEach((o,i)=>{
++     let opt = document.createElement('option');
++     opt.value = i;
++     opt.textContent = `[${i+1}] ${o.customer_name} – ${o.model_design}`;
++     select.appendChild(opt);
++   });
++ }
++
++ document.getElementById('paymentForm').onsubmit = function(e){
++   e.preventDefault();
++   let f = e.target;
++   let p = {};
++   PAYMENT_FIELDS.forEach(k=>p[k]=f[k]?.value||"");
++   p.created_at = new Date().toISOString();
++   let existing = payments.findIndex(x=>x.orderIndex===p.orderIndex);
++   if(existing>=0){ payments[existing]=p; }
++   else { payments.push(p); }
++   persist();
++   f.reset();
++   loadOrders();
++   renderTable();
++ }
++
++ function renderTable(){
++   let thead = "<tr><th>#</th>"+PAYMENT_FIELDS.map(f=>`<th>${f.replace(/_/g,' ')}</th>`).join('')+"<th>Action</th></tr>";
++   let tbody = payments.map((p,i)=>`<tr>
++     <td>${i+1}</td>
++     ${PAYMENT_FIELDS.map(f=>`<td>${p[f]||''}</td>`).join('')}
++     <td><button onclick="deletePayment(${getIndex(p)})">Supprimer</button></td>
++   </tr>`).join('');
++   table.querySelector('thead').innerHTML = thead;
++   table.querySelector('tbody').innerHTML = tbody;
++ }
++
++ function getIndex(pay){
++   return payments.findIndex(p=>p.created_at===pay.created_at);
 +  }
- 
--// Paiements enregistrés
--let payments = JSON.parse(localStorage.getItem("zarbiti_payments")||"[]");
--// Colis livrés
--let parcels = JSON.parse(localStorage.getItem("zarbiti_parcels")||"[]");
-+  document.getElementById('paymentForm').onsubmit = function(e){
-+    e.preventDefault();
-+    let f = e.target;
-+    let p = {};
-+    PAYMENT_FIELDS.forEach(k=>p[k]=f[k]?.value||"");
-+    p.created_at = new Date().toISOString();
-+    let existing = payments.findIndex(x=>x.orderIndex===p.orderIndex);
-+    if(existing>=0){ payments[existing]=p; }
-+    else { payments.push(p); }
-+    persist();
-+    f.reset();
-+    loadOrders();
-+    renderTable();
-+  }
- 
--// Ajouter paiement
--document.getElementById('payForm').onsubmit = function(e){
--  e.preventDefault();
--  let f = e.target;
--  let p = {
--    pay_date: f["pay_date"].value,
--    company: f["company"].value,
--    amount: parseFloat(f["amount"].value),
--    created_at: new Date().toISOString()
--  };
--  payments.push(p);
--  persistPayments();
--  f.reset();
--  updateCreditTable();
--};
-+  function renderTable(){
-+    let thead = "<tr><th>#</th>"+PAYMENT_FIELDS.map(f=>`<th>${f.replace(/_/g,' ')}</th>`).join('')+"<th>Action</th></tr>";
-+    let tbody = payments.map((p,i)=>`<tr>
-+      <td>${i+1}</td>
-+      ${PAYMENT_FIELDS.map(f=>`<td>${p[f]||''}</td>`).join('')}
-+      <td><button onclick="deletePayment(${getIndex(p)})">Supprimer</button></td>
-+    </tr>`).join('');
-+    table.querySelector('thead').innerHTML = thead;
-+    table.querySelector('tbody').innerHTML = tbody;
-+  }
- 
--// Calcul crédit
--function updateCreditTable() {
--  // Groupes sociétés
--  let companies = ["ZBS","Rapide","Aramex","Surexpress","Autre"];
--  let tbody="";
--  companies.forEach(comp=>{
--    // Total COD généré : tous colis livrés, somme cod_amount
--    let cod = parcels.filter(p=>p.company===comp && p.delivery_status==="Livré")
--                     .reduce((a,b)=>a+(parseFloat(b.cod_amount)||0),0);
--    // Total payé (somme des paiements enregistrés pour cette société)
--    let paid = payments.filter(p=>p.company===comp)
--                       .reduce((a,b)=>a+(parseFloat(b.amount)||0),0);
--    let remain = cod-paid;
--    tbody+=`<tr>
--      <td>${comp}</td>
--      <td>${cod.toFixed(2)}</td>
--      <td>${paid.toFixed(2)}</td>
--      <td style="color:${remain>0?'#f7bc6b':'#91c97a'};font-weight:700;">${remain.toFixed(2)}</td>
--    </tr>`;
--  });
--  document.getElementById('creditTable').querySelector('tbody').innerHTML = tbody;
--}
--function persistPayments(){
--  localStorage.setItem("zarbiti_payments",JSON.stringify(payments));
--}
--window.exportCSV = function(){
--  let FIELDS=["pay_date","company","amount","created_at"];
--  let csv = FIELDS.join(";")+"\n";
--  csv += payments.map(p=>FIELDS.map(f=>'"'+(p[f]||"")+'"').join(";")).join("\n");
--  const link = document.createElement('a');
--  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
--  link.download = "zarbiti-paiements.csv";
--  document.body.appendChild(link); link.click(); document.body.removeChild(link);
--}
--window.clearAll = function(){
--  if(confirm("Tout supprimer les paiements ?")){
--    payments = [];
--    persistPayments();
--    updateCreditTable();
-+  function getIndex(pay){
-+    return payments.findIndex(p=>p.created_at===pay.created_at);
-   }
--}
--window.logout = function(){
--  localStorage.removeItem("zarbiti_user");
--  location.href="index.html";
--}
--updateCreditTable();
-+  function persist(){
-+    localStorage.setItem("zarbiti_payments", JSON.stringify(payments));
-+  }
-+  window.deletePayment = function(i){
-+    if(confirm('Supprimer ce paiement ?')){
-+      payments.splice(i,1);
-+      persist();
-+      renderTable();
-+    }
-+  }
-+  window.exportCSV = function(){
-+    let csv = PAYMENT_FIELDS.join(';')+"
++ function persist(){
++   localStorage.setItem("zarbiti_payments", JSON.stringify(payments));
++ }
++ window.deletePayment = function(i){
++   if(confirm('Supprimer ce paiement ?')){
++     payments.splice(i,1);
++     persist();
++     renderTable();
+    }
+--}
+--window.logout = function(){
+--  localStorage.removeItem("zarbiti_user");
+--  location.href="index.html";
+--}
+--updateCreditTable();
+-+  function persist(){
+-+    localStorage.setItem("zarbiti_payments", JSON.stringify(payments));
+-+  }
+-+  window.deletePayment = function(i){
+-+    if(confirm('Supprimer ce paiement ?')){
+-+      payments.splice(i,1);
+-+      persist();
+-+      renderTable();
+-+    }
+-+  }
+-+  window.exportCSV = function(){
+-+    let csv = PAYMENT_FIELDS.join(';')+"
+-+";
+-+    csv += payments.map(p=>PAYMENT_FIELDS.map(f=>'"'+(p[f]||'')+'"').join(';')).join("
+-+");
+-+    const link = document.createElement('a');
+-+    link.href = "data:text/csv;charset=utf-8,"+encodeURIComponent(csv);
+-+    link.download = "zarbiti-paiements.csv";
+-+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+-+  }
+-+  window.clearAll = function(){
+-+    if(confirm('Tout supprimer ?')){
+-+      payments = [];
+-+      persist();
+-+      renderTable();
+-+    }
+-+  }
+-+
+-+  loadOrders();
+-+  renderTable();
+-+});
+- </script>
+- </body>
+- </html>
++ }
++ window.exportCSV = function(){
++   let csv = PAYMENT_FIELDS.join(';')+"
 +";
-+    csv += payments.map(p=>PAYMENT_FIELDS.map(f=>'"'+(p[f]||'')+'"').join(';')).join("
++   csv += payments.map(p=>PAYMENT_FIELDS.map(f=>'"'+(p[f]||'')+'"').join(';')).join("
 +");
-+    const link = document.createElement('a');
-+    link.href = "data:text/csv;charset=utf-8,"+encodeURIComponent(csv);
-+    link.download = "zarbiti-paiements.csv";
-+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
-+  }
-+  window.clearAll = function(){
-+    if(confirm('Tout supprimer ?')){
-+      payments = [];
-+      persist();
-+      renderTable();
-+    }
-+  }
++   const link = document.createElement('a');
++   link.href = "data:text/csv;charset=utf-8,"+encodeURIComponent(csv);
++   link.download = "zarbiti-paiements.csv";
++   document.body.appendChild(link); link.click(); document.body.removeChild(link);
++ }
++ window.clearAll = function(){
++   if(confirm('Tout supprimer ?')){
++     payments = [];
++     persist();
++     renderTable();
++   }
++ }
 +
-+  loadOrders();
-+  renderTable();
++ loadOrders();
++ renderTable();
 +});
- </script>
- </body>
- </html>
++</script>
++</body>
++</html>
