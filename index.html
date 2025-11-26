@@ -1,126 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>ZARBITI Commandes & Livraison</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: Arial, sans-serif; background: #faf8f4; color:#222; margin:0; }
-    h1 { background:#c9aa74; color:white; margin:0 0 20px 0; padding:15px; font-size:1.8em; }
-    .container { max-width:1100px; margin:auto; padding:20px; background:white; border-radius:8px; box-shadow:0 0 14px #ddd; }
-    label { font-weight:bold; }
-    input, select, textarea { padding:8px; margin:4px 0; width:100%; box-sizing:border-box; }
-    button { background:#c9aa74; color:white; border:none; padding:10px 16px; border-radius:4px; cursor:pointer; font-size:1em;}
-    button:hover { background:#8e7746; }
-    table { width:100%; border-collapse:collapse; margin-top:30px; }
-    th, td { border:1px solid #eee; padding:7px 4px; }
-    th { background:#f8e9d2; }
-    tr:nth-child(even) { background:#f6f4ed; }
-    .actions { display:flex; gap:7px; }
-    .wide-input { width:60%; }
-    .small { font-size:80%; color:#888;}
-    @media (max-width: 700px){ .container,table,.wide-input { width:98vw!important; min-width:220px; } }
-  </style>
+  <title>Zarbiti – Accueil & Connexion</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  <h1>ZARBITI Commandes & Livraison</h1>
-  <div class="container">
-    <form id="orderForm" autocomplete="off">
-      <h2>Ajouter une commande</h2>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;">
-        <div><label>Page:</label><input name="page" required></div>
-        <div><label>Date:</label><input name="order_date" type="date" required></div>
-        <div><label>Catégorie:</label><input name="product_category"></div>
-        <div><label>Matière:</label><input name="material"></div>
-        <div><label>Modèle:</label><input name="model_name"></div>
-        <div><label>Dimension:</label><input name="dimension"></div>
-        <div><label>Quantité:</label><input name="quantity" type="number" min="1" required></div>
-        <div><label>Prix unitaire DT:</label><input name="unit_price" type="number" min="0" step="1"></div>
-        <div><label>Livraison DT:</label><input name="delivery_fee" type="number" min="0" step="1"></div>
-        <div><label>Status Pipeline:</label>
-          <select name="status_pipeline">
-            <option value="Nouveau">Nouveau</option>
-            <option value="À confirmer">À confirmer</option>
-            <option value="Confirmé">Confirmé</option>
-            <option value="En production">En production</option>
-            <option value="Prêt">Prêt</option>
-            <option value="En livraison">En livraison</option>
-            <option value="Livré">Livré</option>
-            <option value="Retour">Retour</option>
-            <option value="Annulé">Annulé</option>
-          </select>
-        </div>
-        <div><label>Société Livraison:</label><input name="delivery_company"></div>
-        <div><label>N° Colis:</label><input name="parcel_number"></div>
-        <div><label>Status Livraison:</label>
-          <select name="delivery_status">
-            <option value="Prêt">Prêt</option>
-            <option value="En livraison">En livraison</option>
-            <option value="Livré">Livré</option>
-            <option value="Retour">Retour</option>
-            <option value="Problème">Problème</option>
-          </select>
-        </div>
-        <div><label>Date Livraison:</label><input name="delivery_date" type="date"></div>
-        <div><label>Date Réception:</label><input name="received_date" type="date"></div>
-        <div><label>Remarques Livraison:</label><input name="delivery_remarks"></div>
-        <div><label>Nom Client:</label><input name="customer_name"></div>
-        <div><label>Téléphone:</label><input name="phone"></div>
-        <div><label>Adresse:</label><input name="address" class="wide-input"></div>
-        <div><label>Ville:</label><input name="city"></div>
-        <div><label>Remarque Générale:</label><input name="remarks"></div>
-      </div>
-      <button type="submit">Ajouter la commande</button>
+  <div class="login-container">
+    <h1>Zarbiti Plateforme<br><span class="subtitle">Vente, Production & Livraison</span></h1>
+    <form id="loginForm" autocomplete="off">
+      <label for="username">Identifiant</label>
+      <input id="username" autocomplete="username" required>
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button type="submit">Connexion</button>
     </form>
-    <hr>
-    <h2>Commandes</h2>
-    <div class="small">Les données sont enregistrées dans votre navigateur. <button onclick="exportCSV()">Exporter CSV</button> <button onclick="clearAll()">Tout supprimer</button></div>
-    <table id="ordersTable"><thead></thead><tbody></tbody></table>
+    <div id="loginError" class="error-msg"></div>
   </div>
+
+  <div id="mainMenu" class="hidden">
+    <h2>Bienvenue <span id="userName"></span> <span class="role-badge" id="userRole"></span></h2>
+    <nav>
+      <ul id="navLinks"></ul>
+      <button onclick="logout()">Déconnexion</button>
+    </nav>
+    <div class="dashboard-hero">
+      <p>Choisissez une action ci-dessus pour accéder à votre espace (Commandes, Production, Livraison, Paiements, Utilisateurs).</p>
+      <p class="info-msg">Toutes les données saisies servent à gérer l'activité de vente de tapis, depuis la prise de commande jusqu'à la production, la livraison et la gestion des paiements COD.</p>
+    </div>
+  </div>
+
 <script>
-const FIELDS = ["page","order_date","product_category","material","model_name","dimension","quantity","unit_price","delivery_fee","status_pipeline","delivery_company","parcel_number","delivery_status","delivery_date","received_date","delivery_remarks","customer_name","phone","address","city","remarks"];
-let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
-const form = document.getElementById('orderForm');
-const table = document.getElementById('ordersTable');
-function updateTable() {
-  let thead = "<tr><th>#</th>"+FIELDS.map(f=>"<th>"+f.replace(/_/g," ")+"</th>").join("")+"<th>Actions</th></tr>";
-  let tbody = orders.map((o,i)=>"<tr>"+`<td>${i+1}</td>`+FIELDS.map(f=>`<td>${o[f]||""}</td>`).join("")
-    +`<td class="actions"><button onclick="delOrder(${i})">Supprimer</button></td></tr>`).join("");
-  table.querySelector('thead').innerHTML = thead;
-  table.querySelector('tbody').innerHTML = tbody;
-}
-form.onsubmit = e => {
-  e.preventDefault();
-  let o = {};
-  FIELDS.forEach(f=>o[f]=form[f].value);
-  orders.push(o);
-  localStorage.setItem("zarbiti_orders",JSON.stringify(orders));
-  form.reset();
-  updateTable();
+// Utilisateurs de démonstration (changez/ajoutez pour votre équipe)
+const DEMO_USERS = [
+  { username: "admin", password: "1234", name: "Administrateur", role: "admin" },
+  { username: "vente", password: "1234", name: "Vente", role: "vente" },
+  { username: "confirmation", password: "1234", name: "Confirmation", role: "confirmation" },
+  { username: "usine", password: "1234", name: "Production", role: "usine" },
+  { username: "livraison", password: "1234", name: "Livraison", role: "livraison" },
+  { username: "compta", password: "1234", name: "Comptabilité", role: "compta" }
+];
+
+// Accès possible selon rôle
+const NAV_LINKS = {
+  admin: [
+    { url: "orders.html", txt: "Commandes" },
+    { url: "production.html", txt: "Production" },
+    { url: "parcels.html", txt: "Livraisons/Colis" },
+    { url: "payments.html", txt: "Paiements & Crédits" },
+    { url: "users.html", txt: "Utilisateurs" }
+  ],
+  vente: [
+    { url: "orders.html", txt: "Commandes" }
+  ],
+  confirmation: [
+    { url: "orders.html", txt: "Commandes" }
+  ],
+  usine: [
+    { url: "production.html", txt:"Production" }
+  ],
+  livraison: [
+    { url: "parcels.html", txt:"Livraisons/Colis" }
+  ],
+  compta: [
+    { url: "payments.html", txt:"Paiements & Crédits" }
+  ]
 };
-window.delOrder = function(i){
-  if(confirm("Supprimer cette commande ?")) {
-    orders.splice(i,1);
-    localStorage.setItem("zarbiti_orders",JSON.stringify(orders));
-    updateTable();
+
+function showMenu(user){
+  document.querySelector('.login-container').classList.add('hidden');
+  document.getElementById('mainMenu').classList.remove('hidden');
+  document.getElementById('userName').innerText = user.name;
+  document.getElementById('userRole').innerText = user.role.charAt(0).toUpperCase()+user.role.slice(1);
+
+  // Menu links according to role
+  const links = NAV_LINKS[user.role] || [];
+  let html = "";
+  for(const l of links){
+    html += `<li><a href="${l.url}">${l.txt}</a></li>`;
+  }
+  document.getElementById('navLinks').innerHTML = html;
+}
+
+function logout(){
+  localStorage.removeItem("zarbiti_user");
+  location.reload();
+}
+
+const loginForm = document.getElementById("loginForm");
+loginForm.onsubmit = function(e){
+  e.preventDefault();
+  let username = document.getElementById("username").value.trim();
+  let password = document.getElementById("password").value;
+  let user = DEMO_USERS.find(u => u.username === username && u.password === password);
+  if(!user){
+    document.getElementById("loginError").innerText="Identifiant ou mot de passe incorrect.";
+    return false;
+  }
+  localStorage.setItem("zarbiti_user", JSON.stringify(user));
+  showMenu(user);
+}
+
+window.onload = function(){
+  let user = localStorage.getItem("zarbiti_user");
+  if(user){
+    showMenu(JSON.parse(user));
   }
 }
-function exportCSV(){
-  let csv = FIELDS.join(";")+"\n";
-  csv += orders.map(o=>FIELDS.map(f=>'"'+(o[f]||"")+'"').join(";")).join("\n");
-  const link = document.createElement('a');
-  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-  link.download = "zarbiti-commandes.csv";
-  document.body.appendChild(link); link.click(); document.body.removeChild(link);
-}
-function clearAll(){
-  if(confirm("Tout supprimer ?")) {
-    orders = [];
-    localStorage.removeItem("zarbiti_orders");
-    updateTable();
-  }
-}
-updateTable();
 </script>
 </body>
 </html>
