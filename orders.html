@@ -143,6 +143,10 @@
 const REQUIRED_ROLE = ['admin','vente','confirmation'];
 const ORDER_FIELDS = ["page","usage","carpet_type","model_design","model_image","dimension","quantity","unit_price","delivery_fee","customer_name","customer_phone","customer_address","customer_city","notes","status_pipeline","created_at"];
 const table = document.getElementById('ordersTable');
+const STATUS_OPTIONS = [
+  "Nouveau", "À confirmer", "Confirmé", "En production", "Prêt",
+  "En livraison", "Livré", "Retour", "Annulé"
+];
 
 function checkLogin() {
   let user = localStorage.getItem("zarbiti_user");
@@ -176,7 +180,6 @@ document.getElementById('orderForm').onsubmit = function(e){
   let o = {};
   ORDER_FIELDS.forEach(k=>o[k]=f[k]?.value||"");
   o.created_at = new Date().toISOString();
-  // Image data handling
   let imgField = f["model_image"];
   if(imgField && imgField.files && imgField.files[0]){
     let reader = new FileReader();
@@ -205,18 +208,34 @@ function updateTable(){
   let thead = "<tr>"+
     "<th>#</th>"+
     ORDER_FIELDS.map(f=>"<th>"+f.replace(/_/g," ")+"</th>").join("")+
-    "<th>Action</th></tr>";
+    "<th>Statut</th><th>Action</th></tr>";
   let tbody = filtered.map((o,i)=>{
     return `<tr>
       <td>${i+1}</td>
       ${ORDER_FIELDS.map(f=>
-        f=="model_image" ? `<td>${o[f]?`<img src="${o[f]}" style="max-width:60px;border-radius:6px;">`:""}</td>` : `<td>${o[f]}</td>`
+        f=="model_image"
+          ? `<td>${o[f]?`<img src="${o[f]}" style="max-width:60px;border-radius:6px;">`:""}</td>`
+          : `<td>${o[f]}</td>`
       ).join("")}
-      <td><button onclick="deleteOrder(${i})">Supprimer</button></td>
+      <td>
+        <select onchange="changeStatus(${getOrderIndex(o)},this.value)">
+          ${STATUS_OPTIONS.map(s=>`<option value="${s}"${s===o.status_pipeline?' selected':''}>${s}</option>`).join("")}
+        </select>
+      </td>
+      <td><button onclick="deleteOrder(${getOrderIndex(o)})">Supprimer</button></td>
     </tr>`;
   }).join("");
   table.querySelector('thead').innerHTML = thead;
   table.querySelector('tbody').innerHTML = tbody;
+}
+function getOrderIndex(order){
+  // Need real index from 'orders'
+  return orders.findIndex(o=>o.created_at===order.created_at);
+}
+function changeStatus(idx, newStatus){
+  orders[idx].status_pipeline = newStatus;
+  persistOrders();
+  updateTable();
 }
 function persistOrders(){
   localStorage.setItem("zarbiti_orders",JSON.stringify(orders));
@@ -230,7 +249,7 @@ window.deleteOrder = function(i){
 }
 function exportCSV(){
   let csv = ORDER_FIELDS.join(";")+"\n";
-  csv += orders.map(o=>ORDER_FIELDS.map(f=>'"'+(o[f]||"")+'"').join(";")).join("\n");
+  csv += orders.map(o=>ORDER_FIELDS.map(f=>'"'+(o[f]||"")+'"').join(";')).join("\n");
   const link = document.createElement('a');
   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
   link.download = "zarbiti-commandes.csv";
@@ -248,7 +267,6 @@ window.logout = function(){
   localStorage.removeItem("zarbiti_user");
   location.href="index.html";
 }
-// Initial table
 updateTable();
 </script>
 </body>
