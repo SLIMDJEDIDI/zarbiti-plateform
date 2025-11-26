@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Livraisons & Colis – Zarbiti Plateforme</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="login-container" id="locked" style="max-width:490px;">
+  <h1>Livraisons / Colis</h1>
+  <div class="info-msg">Veuillez vous connecter <a href="index.html">ici</a> avec un rôle Livraison ou Admin.</div>
+</div>
+<div id="pageContent" class="hidden container" style="max-width:1160px;">
+  <nav>
+    <ul>
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="orders.html">Commandes</a></li>
+      <li><a href="production.html">Production</a></li>
+      <li><a href="payments.html">Paiements</a></li>
+    </ul>
+    <span class="role-badge" id="roleParc"></span>
+    <button onclick="logout()" style="float:right;">Déconnexion</button>
+  </nav>
+
+  <h2>Gestion colis & livraison</h2>
+  <form id="parcelForm" autocomplete="off">
+    <label for="orderIndex">Commande associée</label>
+    <select name="orderIndex" id="orderIndex"></select>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div>
+        <label>Société livraison</label>
+        <select name="company">
+          <option>ZBS</option>
+          <option>Rapide</option>
+          <option>Aramex</option>
+          <option>Surexpress</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div>
+        <label>N° Colis / Bordereau</label>
+        <input name="parcel_number" required>
+      </div>
+      <div>
+        <label>Status livraison</label>
+        <select name="delivery_status">
+          <option>Créé</option>
+          <option>En transit</option>
+          <option>Livré</option>
+          <option>Retour</option>
+          <option>Problème</option>
+        </select>
+      </div>
+      <div>
+        <label>Date livraison</label>
+        <input name="delivery_date" type="date">
+      </div>
+      <div>
+        <label>Montant COD attendu (DT)</label>
+        <input name="cod_amount" type="number" min="0" step="1">
+      </div>
+    </div>
+    <button type="submit" style="margin-top:10px;">Ajouter/Maj colis</button>
+  </form>
+  <hr>
+  <h2>Liste des colis</h2>
+  <label>
+    Filtrer par statut :
+    <select id="filterParcel">
+      <option value="">-- Tous --</option>
+      <option>Créé</option>
+      <option>En transit</option>
+      <option>Livré</option>
+      <option>Retour</option>
+      <option>Problème</option>
+    </select>
+  </label>
+  <table id="parcelTable" style="width:100%;margin-top:18px;">
+    <thead></thead><tbody></tbody>
+  </table>
+  <div style="margin-top:12px;">
+    <button onclick="exportCSV()">Exporter CSV</button>
+    <button onclick="clearAll()">Tout supprimer</button>
+  </div>
+</div>
+
+<script>
+const REQUIRED_ROLE = ['admin','livraison'];
+const PARCEL_FIELDS = ["orderIndex","company","parcel_number","delivery_status","delivery_date","cod_amount","created_at"];
+const table = document.getElementById('parcelTable');
+function checkLogin() {
+  let user = localStorage.getItem("zarbiti_user");
+  if(!user) return false;
+  let obj=JSON.parse(user);
+  if(!REQUIRED_ROLE.includes(obj.role)) return false;
+  document.getElementById('locked').classList.add('hidden');
+  document.getElementById('pageContent').classList.remove('hidden');
+  document.getElementById('roleParc').innerText = obj.role.charAt(0).toUpperCase()+obj.role.slice(1);
+  return true;
+}
+window.onload = () => { checkLogin(); loadOrdersDropdown(); };
+
+// Récupérer commandes pour associer chaque colis, afficher dropdown
+function loadOrdersDropdown(){
+  let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
+  let select = document.getElementById('orderIndex');
+  select.innerHTML="";
+  orders.forEach((o,i)=>{
+    let txt = `[${i+1}] ${o.page} – ${o.customer_name} – ${o.model_design}`;
+    let opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = txt;
+    select.appendChild(opt);
+  });
+}
+
+// Charger les colis
+let parcels = JSON.parse(localStorage.getItem("zarbiti_parcels")||"[]");
+
+// Ajout ou Màj colis
+document.getElementById('parcelForm').onsubmit = function(e){
+  e.preventDefault();
+  let f = e.target;
+  let p = {};
+  PARCEL_FIELDS.forEach(k=>p[k]=f[k]?.value||"");
+  p.created_at = new Date().toISOString();
+  parcels.push(p);
+  persistParcels();
+  f.reset();
+  updateTable();
+};
+
+// Affichage tableau colis
+function updateTable(){
+  let status = document.getElementById('filterParcel').value;
+  let filtered = status ? parcels.filter(p=>p.delivery_status===status) : parcels;
+  let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
+  let thead = "<tr>"+
+    "<th>#</th><th>Commande</th>"+
+    PARCEL_FIELDS.map(f=>"<th>"+f.replace(/_/g," ")+"</th>").join("")+
+    "<th>Action</th></tr>";
+  let tbody = filtered.map((p,i)=>{
+    let ord = orders[p.orderIndex]||{};
+    let ordertxt = ord.customer_name ? `${ord.customer_name} (${ord.model_design})` : `[${parseInt(p.orderIndex)+1}]`;
+    return `<tr>
+      <td>${i+1}</td>
+      <td>${ordertxt}</td>
+      ${PARCEL_FIELDS.map(f=> `<td>${p[f]}</td>`).join("")}
+      <td><button onclick="deleteParcel(${i})">Supprimer</button></td>
+    </tr>`;
+  }).join("");
+  table.querySelector('thead').innerHTML = thead;
+  table.querySelector('tbody').innerHTML = tbody;
+}
+function persistParcels(){
+  localStorage.setItem("zarbiti_parcels",JSON.stringify(parcels));
+}
+window.deleteParcel = function(i){
+  if(confirm("Supprimer ce colis ?")){
+    parcels.splice(i,1);
+    persistParcels();
+    updateTable();
+  }
+}
+function exportCSV(){
+  let csv = PARCEL_FIELDS.join(";")+"\n";
+  csv += parcels.map(p=>PARCEL_FIELDS.map(f=>'"'+(p[f]||"")+'"').join(";")).join("\n");
+  const link = document.createElement('a');
+  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+  link.download = "zarbiti-colis.csv";
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+}
+function clearAll(){
+  if(confirm("Tout supprimer ?")){
+    parcels = [];
+    persistParcels();
+    updateTable();
+  }
+}
+document.getElementById('filterParcel').onchange = updateTable;
+window.logout = function(){
+  localStorage.removeItem("zarbiti_user");
+  location.href="index.html";
+}
+updateTable();
+</script>
+</body>
+</html>
