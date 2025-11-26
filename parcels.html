@@ -47,7 +47,7 @@ index 130890c70d68f92374f6287a75275d1817fff101..95f3a80dbe3ff32163d512759aaf2b08
 -   <hr>
 -   <h2>Liste des colis</h2>
 -   <label>
--     Filtrer par statut :
+-     Filtrer par statut :
 -     <select id="filterParcel">
 -       <option value="">-- Tous --</option>
 -       <option>Créé</option>
@@ -225,7 +225,7 @@ index 130890c70d68f92374f6287a75275d1817fff101..95f3a80dbe3ff32163d512759aaf2b08
 +  <hr>
 +  <h2>Liste des colis</h2>
 +  <label>
-+    Filtrer par statut :
++    Filtrer par statut :
 +    <select id="filterParcel">
 +      <option value="">-- Tous --</option>
 +      <option>Créé</option>
@@ -396,3 +396,86 @@ index 130890c70d68f92374f6287a75275d1817fff101..95f3a80dbe3ff32163d512759aaf2b08
 +</script>
 +</body>
 +</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Livraisons & Colis – Zarbiti Plateforme</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-page="parcels">
+  <header class="header">
+    <div class="brand"><span class="dot"></span> Livraisons & Colis</div>
+    <nav>
+      <ul>
+        <li><a data-page="home" href="index.html">Accueil</a></li>
+        <li><a data-page="orders" href="orders.html">Commandes</a></li>
+        <li><a data-page="production" href="production.html">Production</a></li>
+        <li><a data-page="parcels" href="parcels.html">Livraisons</a></li>
+        <li><a data-page="payments" href="payments.html">Paiements</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="section-title">
+      <h2>Nouveau colis</h2>
+      <button id="clear-parcels" class="secondary">Vider</button>
+    </div>
+    <form id="parcel-form">
+      <div class="form-grid">
+        <div>
+          <label>Référence commande</label>
+          <input name="orderRef" placeholder="CMD-001" required>
+        </div>
+        <div>
+          <label>Transporteur</label>
+          <input name="carrier" placeholder="Chronopost, Amana..." required>
+        </div>
+        <div>
+          <label>Ville</label>
+          <input name="city" placeholder="Rabat" required>
+        </div>
+        <div>
+          <label>Numéro de suivi</label>
+          <input name="tracking" placeholder="TRK-4587">
+        </div>
+        <div>
+          <label>Statut</label>
+          <select name="status">
+            <option>Préparé</option>
+            <option>En transit</option>
+            <option>En cours de livraison</option>
+            <option>Livré</option>
+            <option>Retour</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit">Ajouter le colis</button>
+    </form>
+
+    <section style="margin-top:30px;">
+      <div class="section-title">
+        <h2>Suivi des colis</h2>
+      </div>
+      <div class="table-wrapper">
+        <table id="parcels-table">
+          <thead>
+            <tr>
+              <th>Créé le</th>
+              <th>Commande</th>
+              <th>Transporteur</th>
+              <th>Ville</th>
+              <th>Statut</th>
+              <th>Suivi</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
