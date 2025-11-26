@@ -1,119 +1,160 @@
 diff --git a/index.html b/index.html
-index 944aba131120f9826cbf44e337563bee0e60f7fd..435bcad89449ce260f6f5c906dcf21ec6d863d8a 100644
+index af372e23c6a643e763aa7d76fd0ee8dd7a3b5c12..29f6f44242f724de0ee55aa6e4c42559a1ef89ec 100644
 --- a/index.html
 +++ b/index.html
-@@ -1,113 +1,36 @@
- <!DOCTYPE html>
- <html lang="fr">
- <head>
-   <meta charset="UTF-8">
-   <title>Zarbiti – Accueil & Connexion</title>
-   <meta name="viewport" content="width=device-width,initial-scale=1">
-   <link rel="stylesheet" href="assets/style.css">
-+  <script src="assets/app.js"></script>
- </head>
- <body>
-   <div class="login-container">
-     <h1>Zarbiti Plateforme<br><span class="subtitle">Vente, Production & Livraison</span></h1>
-     <form id="loginForm" autocomplete="off">
-       <label for="username">Identifiant</label>
-       <input id="username" autocomplete="username" required>
-       <label for="password">Mot de passe</label>
-       <input id="password" type="password" autocomplete="current-password" required>
-       <button type="submit">Connexion</button>
-     </form>
-     <div id="loginError" class="error-msg"></div>
-   </div>
- 
-   <div id="mainMenu" class="hidden">
-     <h2>Bienvenue <span id="userName"></span> <span class="role-badge" id="userRole"></span></h2>
-     <nav>
-       <ul id="navLinks"></ul>
-       <button onclick="logout()">Déconnexion</button>
-     </nav>
-     <div class="dashboard-hero">
-       <p>Choisissez une action ci-dessus pour accéder à votre espace (Commandes, Production, Livraison, Paiements, Utilisateurs).</p>
-       <p class="info-msg">Toutes les données saisies servent à gérer l'activité de vente de tapis, depuis la prise de commande jusqu'à la production, la livraison et la gestion des paiements COD.</p>
-     </div>
-   </div>
- 
--<script>
--// Utilisateurs de démonstration (changez/ajoutez pour votre équipe)
--const DEMO_USERS = [
--  { username: "admin", password: "1234", name: "Administrateur", role: "admin" },
--  { username: "vente", password: "1234", name: "Vente", role: "vente" },
--  { username: "confirmation", password: "1234", name: "Confirmation", role: "confirmation" },
--  { username: "usine", password: "1234", name: "Production", role: "usine" },
--  { username: "livraison", password: "1234", name: "Livraison", role: "livraison" },
--  { username: "compta", password: "1234", name: "Comptabilité", role: "compta" }
--];
--
--// Accès possible selon rôle
--const NAV_LINKS = {
--  admin: [
--    { url: "orders.html", txt: "Commandes" },
--    { url: "production.html", txt: "Production" },
--    { url: "parcels.html", txt: "Livraisons/Colis" },
--    { url: "payments.html", txt: "Paiements & Crédits" },
--    { url: "users.html", txt: "Utilisateurs" }
--  ],
--  vente: [
--    { url: "orders.html", txt: "Commandes" }
--  ],
--  confirmation: [
--    { url: "orders.html", txt: "Commandes" }
--  ],
--  usine: [
--    { url: "production.html", txt:"Production" }
--  ],
--  livraison: [
--    { url: "parcels.html", txt:"Livraisons/Colis" }
--  ],
--  compta: [
--    { url: "payments.html", txt:"Paiements & Crédits" }
--  ]
--};
--
--function showMenu(user){
--  document.querySelector('.login-container').classList.add('hidden');
--  document.getElementById('mainMenu').classList.remove('hidden');
--  document.getElementById('userName').innerText = user.name;
--  document.getElementById('userRole').innerText = user.role.charAt(0).toUpperCase()+user.role.slice(1);
--
--  // Menu links according to role
--  const links = NAV_LINKS[user.role] || [];
--  let html = "";
--  for(const l of links){
--    html += `<li><a href="${l.url}">${l.txt}</a></li>`;
--  }
--  document.getElementById('navLinks').innerHTML = html;
--}
--
--function logout(){
--  localStorage.removeItem("zarbiti_user");
--  location.reload();
--}
--
--const loginForm = document.getElementById("loginForm");
--loginForm.onsubmit = function(e){
--  e.preventDefault();
--  let username = document.getElementById("username").value.trim();
--  let password = document.getElementById("password").value;
--  let user = DEMO_USERS.find(u => u.username === username && u.password === password);
--  if(!user){
--    document.getElementById("loginError").innerText="Identifiant ou mot de passe incorrect.";
--    return false;
--  }
--  localStorage.setItem("zarbiti_user", JSON.stringify(user));
--  showMenu(user);
--}
--
--window.onload = function(){
--  let user = localStorage.getItem("zarbiti_user");
--  if(user){
--    showMenu(JSON.parse(user));
--  }
--}
--</script>
- </body>
- </html>
+@@ -1,119 +1,36 @@
+-diff --git a/index.html b/index.html
+-index 944aba131120f9826cbf44e337563bee0e60f7fd..435bcad89449ce260f6f5c906dcf21ec6d863d8a 100644
+---- a/index.html
+-+++ b/index.html
+-@@ -1,113 +1,36 @@
+- <!DOCTYPE html>
+- <html lang="fr">
+- <head>
+-   <meta charset="UTF-8">
+-   <title>Zarbiti – Accueil & Connexion</title>
+-   <meta name="viewport" content="width=device-width,initial-scale=1">
+-   <link rel="stylesheet" href="assets/style.css">
+-+  <script src="assets/app.js"></script>
+- </head>
+- <body>
+-   <div class="login-container">
+-     <h1>Zarbiti Plateforme<br><span class="subtitle">Vente, Production & Livraison</span></h1>
+-     <form id="loginForm" autocomplete="off">
+-       <label for="username">Identifiant</label>
+-       <input id="username" autocomplete="username" required>
+-       <label for="password">Mot de passe</label>
+-       <input id="password" type="password" autocomplete="current-password" required>
+-       <button type="submit">Connexion</button>
+-     </form>
+-     <div id="loginError" class="error-msg"></div>
+-   </div>
+- 
+-   <div id="mainMenu" class="hidden">
+-     <h2>Bienvenue <span id="userName"></span> <span class="role-badge" id="userRole"></span></h2>
+-     <nav>
+-       <ul id="navLinks"></ul>
+-       <button onclick="logout()">Déconnexion</button>
+-     </nav>
+-     <div class="dashboard-hero">
+-       <p>Choisissez une action ci-dessus pour accéder à votre espace (Commandes, Production, Livraison, Paiements, Utilisateurs).</p>
+-       <p class="info-msg">Toutes les données saisies servent à gérer l'activité de vente de tapis, depuis la prise de commande jusqu'à la production, la livraison et la gestion des paiements COD.</p>
+-     </div>
+-   </div>
+- 
+--<script>
+--// Utilisateurs de démonstration (changez/ajoutez pour votre équipe)
+--const DEMO_USERS = [
+--  { username: "admin", password: "1234", name: "Administrateur", role: "admin" },
+--  { username: "vente", password: "1234", name: "Vente", role: "vente" },
+--  { username: "confirmation", password: "1234", name: "Confirmation", role: "confirmation" },
+--  { username: "usine", password: "1234", name: "Production", role: "usine" },
+--  { username: "livraison", password: "1234", name: "Livraison", role: "livraison" },
+--  { username: "compta", password: "1234", name: "Comptabilité", role: "compta" }
+--];
+--
+--// Accès possible selon rôle
+--const NAV_LINKS = {
+--  admin: [
+--    { url: "orders.html", txt: "Commandes" },
+--    { url: "production.html", txt: "Production" },
+--    { url: "parcels.html", txt: "Livraisons/Colis" },
+--    { url: "payments.html", txt: "Paiements & Crédits" },
+--    { url: "users.html", txt: "Utilisateurs" }
+--  ],
+--  vente: [
+--    { url: "orders.html", txt: "Commandes" }
+--  ],
+--  confirmation: [
+--    { url: "orders.html", txt: "Commandes" }
+--  ],
+--  usine: [
+--    { url: "production.html", txt:"Production" }
+--  ],
+--  livraison: [
+--    { url: "parcels.html", txt:"Livraisons/Colis" }
+--  ],
+--  compta: [
+--    { url: "payments.html", txt:"Paiements & Crédits" }
+--  ]
+--};
+--
+--function showMenu(user){
+--  document.querySelector('.login-container').classList.add('hidden');
+--  document.getElementById('mainMenu').classList.remove('hidden');
+--  document.getElementById('userName').innerText = user.name;
+--  document.getElementById('userRole').innerText = user.role.charAt(0).toUpperCase()+user.role.slice(1);
+--
+--  // Menu links according to role
+--  const links = NAV_LINKS[user.role] || [];
+--  let html = "";
+--  for(const l of links){
+--    html += `<li><a href="${l.url}">${l.txt}</a></li>`;
+--  }
+--  document.getElementById('navLinks').innerHTML = html;
+--}
+--
+--function logout(){
+--  localStorage.removeItem("zarbiti_user");
+--  location.reload();
+--}
+--
+--const loginForm = document.getElementById("loginForm");
+--loginForm.onsubmit = function(e){
+--  e.preventDefault();
+--  let username = document.getElementById("username").value.trim();
+--  let password = document.getElementById("password").value;
+--  let user = DEMO_USERS.find(u => u.username === username && u.password === password);
+--  if(!user){
+--    document.getElementById("loginError").innerText="Identifiant ou mot de passe incorrect.";
+--    return false;
+--  }
+--  localStorage.setItem("zarbiti_user", JSON.stringify(user));
+--  showMenu(user);
+--}
+--
+--window.onload = function(){
+--  let user = localStorage.getItem("zarbiti_user");
+--  if(user){
+--    showMenu(JSON.parse(user));
+--  }
+--}
+--</script>
+- </body>
+- </html>
++<!DOCTYPE html>
++<html lang="fr">
++<head>
++  <meta charset="UTF-8">
++  <title>Zarbiti – Accueil & Connexion</title>
++  <meta name="viewport" content="width=device-width,initial-scale=1">
++  <link rel="stylesheet" href="assets/style.css">
++ <script src="assets/app.js"></script>
++</head>
++<body>
++  <div class="login-container">
++    <h1>Zarbiti Plateforme<br><span class="subtitle">Vente, Production & Livraison</span></h1>
++    <form id="loginForm" autocomplete="off">
++      <label for="username">Identifiant</label>
++      <input id="username" autocomplete="username" required>
++      <label for="password">Mot de passe</label>
++      <input id="password" type="password" autocomplete="current-password" required>
++      <button type="submit">Connexion</button>
++    </form>
++    <div id="loginError" class="error-msg"></div>
++  </div>
++
++  <div id="mainMenu" class="hidden">
++    <h2>Bienvenue <span id="userName"></span> <span class="role-badge" id="userRole"></span></h2>
++    <nav>
++      <ul id="navLinks"></ul>
++      <button onclick="logout()">Déconnexion</button>
++    </nav>
++    <div class="dashboard-hero">
++      <p>Choisissez une action ci-dessus pour accéder à votre espace (Commandes, Production, Livraison, Paiements, Utilisateurs).</p>
++      <p class="info-msg">Toutes les données saisies servent à gérer l'activité de vente de tapis, depuis la prise de commande jusqu'à la production, la livraison et la gestion des paiements COD.</p>
++    </div>
++  </div>
++
++</body>
++</html>
