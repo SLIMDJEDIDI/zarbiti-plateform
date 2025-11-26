@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Commandes – Zarbiti Plateforme</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="login-container" id="locked" style="max-width:500px;">
+  <h1>Accès aux Commandes</h1>
+  <div class="info-msg">Veuillez vous connecter <a href="index.html">ici</a> pour accéder à la gestion des commandes.</div>
+</div>
+<div id="pageContent" class="hidden container" style="max-width:1200px;">
+  <nav>
+    <ul>
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="production.html">Production</a></li>
+      <li><a href="parcels.html">Livraisons/Colis</a></li>
+      <li><a href="payments.html">Paiements</a></li>
+    </ul>
+    <span class="role-badge" id="roleOrder"></span>
+    <button onclick="logout()" style="float:right;">Déconnexion</button>
+  </nav>
+
+  <h2>Nouvelle commande</h2>
+  <form id="orderForm" autocomplete="off">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div><label>Page source</label>
+        <select name="page">
+          <option>ZARBITI</option>
+          <option>BMT</option>
+          <option>TBP</option>
+          <option>Téléphone</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div><label>Usage du tapis</label>
+        <select name="usage">
+          <option>Maison</option>
+          <option>Enfant</option>
+          <option>Cuisine</option>
+          <option>Salle de bain</option>
+          <option>Pack/Promo</option>
+        </select>
+      </div>
+      <div><label>Type tapis</label>
+        <select name="carpet_type">
+          <option>Dote Zarbiti</option>
+          <option>Dote cuisine</option>
+          <option>Moquette</option>
+          <option>Forrure</option>
+        </select>
+      </div>
+      <div><label>Modèle/design</label>
+        <input name="model_design" placeholder="Nom/design" required>
+      </div>
+      <div><label>Image du design</label>
+        <input name="model_image" type="file" accept="image/*" onchange="previewImage(event)">
+        <img id="imgPreview" src="" style="max-width:80px;display:none;margin-top:4px;border-radius:7px;">
+      </div>
+      <div>
+        <label>Dimension (cm)</label>
+        <input name="dimension" placeholder="Ex: 200x150" required>
+      </div>
+      <div>
+        <label>Qté</label>
+        <input name="quantity" type="number" min="1" required>
+      </div>
+      <div>
+        <label>Prix unitaire DT</label>
+        <input name="unit_price" type="number" min="0" step="1">
+      </div>
+      <div>
+        <label>Frais livraison DT</label>
+        <input name="delivery_fee" type="number" min="0" step="1">
+      </div>
+      <div>
+        <label>Nom client</label>
+        <input name="customer_name" required>
+      </div>
+      <div>
+        <label>Tél client</label>
+        <input name="customer_phone" required>
+      </div>
+      <div>
+        <label>Adresse</label>
+        <input name="customer_address">
+      </div>
+      <div>
+        <label>Ville</label>
+        <input name="customer_city">
+      </div>
+      <div>
+        <label>Notes internes</label>
+        <input name="notes">
+      </div>
+      <div>
+        <label>Status pipeline</label>
+        <select name="status_pipeline">
+          <option>Nouveau</option>
+          <option>À confirmer</option>
+          <option>Confirmé</option>
+          <option>En production</option>
+          <option>Prêt</option>
+          <option>En livraison</option>
+          <option>Livré</option>
+          <option>Retour</option>
+          <option>Annulé</option>
+        </select>
+      </div>
+    </div>
+    <button type="submit" style="margin-top:10px;">Ajouter la commande</button>
+  </form>
+  <hr>
+  <h2>Liste des commandes</h2>
+  <label>
+    Filtrer par status :
+    <select id="filterStatus">
+      <option value="">-- Tous --</option>
+      <option>Nouveau</option>
+      <option>À confirmer</option>
+      <option>Confirmé</option>
+      <option>En production</option>
+      <option>Prêt</option>
+      <option>En livraison</option>
+      <option>Livré</option>
+      <option>Retour</option>
+      <option>Annulé</option>
+    </select>
+  </label>
+  <table id="ordersTable" style="width:100%;margin-top:18px;">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+  <div style="margin-top:12px;">
+    <button onclick="exportCSV()">Exporter en CSV</button>
+    <button onclick="clearAll()">Tout supprimer</button>
+  </div>
+</div>
+
+<script>
+const REQUIRED_ROLE = ['admin','vente','confirmation'];
+const ORDER_FIELDS = ["page","usage","carpet_type","model_design","model_image","dimension","quantity","unit_price","delivery_fee","customer_name","customer_phone","customer_address","customer_city","notes","status_pipeline","created_at"];
+const table = document.getElementById('ordersTable');
+
+function checkLogin() {
+  let user = localStorage.getItem("zarbiti_user");
+  if(!user){ return false }
+  let obj=JSON.parse(user);
+  if(!REQUIRED_ROLE.includes(obj.role)){ return false }
+  document.getElementById('locked').classList.add('hidden');
+  document.getElementById('pageContent').classList.remove('hidden');
+  document.getElementById('roleOrder').innerText = obj.role.charAt(0).toUpperCase()+obj.role.slice(1);
+  return true;
+}
+window.onload = checkLogin;
+
+// Image upload preview
+window.previewImage = function(e){
+  const img = document.getElementById('imgPreview');
+  const file = e.target.files[0];
+  if(!file){ img.style.display="none"; return; }
+  const reader = new FileReader();
+  reader.onload = function(evt){ img.src = evt.target.result; img.style.display="block"; }
+  reader.readAsDataURL(file);
+}
+
+// Load orders
+let orders = JSON.parse(localStorage.getItem("zarbiti_orders")||"[]");
+
+// Add new order
+document.getElementById('orderForm').onsubmit = function(e){
+  e.preventDefault();
+  let f = e.target;
+  let o = {};
+  ORDER_FIELDS.forEach(k=>o[k]=f[k]?.value||"");
+  o.created_at = new Date().toISOString();
+  // Image data handling
+  let imgField = f["model_image"];
+  if(imgField && imgField.files && imgField.files[0]){
+    let reader = new FileReader();
+    reader.onload = function(evt){
+      o.model_image = evt.target.result;
+      orders.push(o);
+      persistOrders();
+      f.reset();
+      document.getElementById('imgPreview').style.display="none";
+      updateTable();
+    }
+    reader.readAsDataURL(imgField.files[0]);
+    return;
+  }
+  orders.push(o);
+  persistOrders();
+  f.reset();
+  document.getElementById('imgPreview').style.display="none";
+  updateTable();
+};
+
+// Table update
+function updateTable(){
+  let status = document.getElementById('filterStatus').value;
+  let filtered = status ? orders.filter(o=>o.status_pipeline===status) : orders;
+  let thead = "<tr>"+
+    "<th>#</th>"+
+    ORDER_FIELDS.map(f=>"<th>"+f.replace(/_/g," ")+"</th>").join("")+
+    "<th>Action</th></tr>";
+  let tbody = filtered.map((o,i)=>{
+    return `<tr>
+      <td>${i+1}</td>
+      ${ORDER_FIELDS.map(f=>
+        f=="model_image" ? `<td>${o[f]?`<img src="${o[f]}" style="max-width:60px;border-radius:6px;">`:""}</td>` : `<td>${o[f]}</td>`
+      ).join("")}
+      <td><button onclick="deleteOrder(${i})">Supprimer</button></td>
+    </tr>`;
+  }).join("");
+  table.querySelector('thead').innerHTML = thead;
+  table.querySelector('tbody').innerHTML = tbody;
+}
+function persistOrders(){
+  localStorage.setItem("zarbiti_orders",JSON.stringify(orders));
+}
+window.deleteOrder = function(i){
+  if(confirm("Supprimer cette commande ?")){
+    orders.splice(i,1);
+    persistOrders();
+    updateTable();
+  }
+}
+function exportCSV(){
+  let csv = ORDER_FIELDS.join(";")+"\n";
+  csv += orders.map(o=>ORDER_FIELDS.map(f=>'"'+(o[f]||"")+'"').join(";")).join("\n");
+  const link = document.createElement('a');
+  link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+  link.download = "zarbiti-commandes.csv";
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+}
+function clearAll(){
+  if(confirm("Tout supprimer ?")){
+    orders = [];
+    persistOrders();
+    updateTable();
+  }
+}
+document.getElementById('filterStatus').onchange = updateTable;
+window.logout = function(){
+  localStorage.removeItem("zarbiti_user");
+  location.href="index.html";
+}
+// Initial table
+updateTable();
+</script>
+</body>
+</html>
