@@ -42,7 +42,7 @@ index 298b0eec799e0f2b0d5ace841cb5694257e25f9c..77d17803d7827bd4b9722fd49aaeafe5
 -           <option>ZARBITI</option>
 -           <option>BMT</option>
 -@@ -118,156 +119,145 @@
--     Filtrer par status :
+-     Filtrer par status :
 -     <select id="filterStatus">
 -       <option value="">-- Tous --</option>
 -       <option>Nouveau</option>
@@ -172,7 +172,7 @@ index 298b0eec799e0f2b0d5ace841cb5694257e25f9c..77d17803d7827bd4b9722fd49aaeafe5
 +        <select name="page">
 +          <option>ZARBITI</option>
 +          <option>BMT</option>
-+    Filtrer par status :
++    Filtrer par status :
 +    <select id="filterStatus">
 +      <option value="">-- Tous --</option>
 +      <option>Nouveau</option>
@@ -473,3 +473,131 @@ index 298b0eec799e0f2b0d5ace841cb5694257e25f9c..77d17803d7827bd4b9722fd49aaeafe5
 +</script>
 +</body>
 +</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Commandes – Zarbiti Plateforme</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-page="orders">
+  <header class="header">
+    <div class="brand"><span class="dot"></span> Commandes</div>
+    <nav>
+      <ul>
+        <li><a data-page="home" href="index.html">Accueil</a></li>
+        <li><a data-page="orders" href="orders.html">Commandes</a></li>
+        <li><a data-page="production" href="production.html">Production</a></li>
+        <li><a data-page="parcels" href="parcels.html">Livraisons</a></li>
+        <li><a data-page="payments" href="payments.html">Paiements</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="section-title">
+      <h2>Nouvelle commande</h2>
+      <button id="clear-orders" class="secondary">Tout effacer</button>
+    </div>
+    <form id="order-form">
+      <div class="form-grid">
+        <div>
+          <label>Source</label>
+          <select name="source">
+            <option>ZARBITI</option>
+            <option>BMT</option>
+            <option>Instagram</option>
+            <option>WhatsApp</option>
+          </select>
+        </div>
+        <div>
+          <label>Client</label>
+          <input name="client" placeholder="Nom et prénom" required>
+        </div>
+        <div>
+          <label>Téléphone</label>
+          <input name="phone" placeholder="06..." required>
+        </div>
+        <div>
+          <label>Ville</label>
+          <input name="city" placeholder="Casablanca" required>
+        </div>
+        <div>
+          <label>Produit / modèle</label>
+          <input name="product" placeholder="Tapis Azilal" required>
+        </div>
+        <div>
+          <label>Dimension (cm)</label>
+          <input name="dimension" placeholder="250 x 300">
+        </div>
+        <div>
+          <label>Quantité</label>
+          <input name="quantity" type="number" min="1" value="1" required>
+        </div>
+        <div>
+          <label>Prix (MAD)</label>
+          <input name="price" type="number" min="0" step="100">
+        </div>
+        <div>
+          <label>Statut</label>
+          <select name="status">
+            <option>Nouveau</option>
+            <option>À confirmer</option>
+            <option>Confirmé</option>
+            <option>En production</option>
+            <option>Prêt</option>
+            <option>En livraison</option>
+            <option>Livré</option>
+            <option>Retour</option>
+            <option>Annulé</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label>Notes</label>
+        <textarea name="notes" placeholder="Précisions sur la matière, la couleur ou la livraison..."></textarea>
+      </div>
+      <button type="submit">Enregistrer la commande</button>
+    </form>
+
+    <section style="margin-top:28px;">
+      <div class="section-title">
+        <h2>Commandes en cours</h2>
+        <div>
+          <label for="filter-status">Filtrer :</label>
+          <select id="filter-status" class="badge">
+            <option value="">Tous les statuts</option>
+            <option>Nouveau</option>
+            <option>À confirmer</option>
+            <option>Confirmé</option>
+            <option>En production</option>
+            <option>Prêt</option>
+            <option>En livraison</option>
+            <option>Livré</option>
+            <option>Retour</option>
+            <option>Annulé</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="orders-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Produit</th>
+              <th>Dimension</th>
+              <th>Qté</th>
+              <th>Prix</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
